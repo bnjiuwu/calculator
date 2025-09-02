@@ -16,7 +16,7 @@ class GUI:
         self.numero = tk.Label(root, text="Numero",font=("Comic Sans MS",12))
         self.numero.place(x=50,y=10)
 
-        self.base = tk.Label(root, text="Base",font=("Comic Sans MS",12))
+        self.base = tk.Label(root, text="Origen",font=("Comic Sans MS",12))
         self.base.place(x=250,y=10)
 
         #------------ input ------------
@@ -26,7 +26,14 @@ class GUI:
         self.base_var = tk.StringVar(value="10")
         self.base_menu = tk.OptionMenu(root, self.base_var, "2", "8", "10", "16")
         self.base_menu.config(font=("Comic Sans MS",12),bg="#cc004e",fg="white")
-        self.base_menu.place(x=250, y=40, width=80, height=40)
+        self.base_menu.place(x=350, y=40, width=80, height=40)
+
+        tk.Label(root, text="Base",font=("Comic Sans MS",12)).place(x=350,y=10)
+        self.origen = tk.StringVar(value="")
+        self.origen_menu = tk.OptionMenu(root, self.origen, "Decimal", "Octal", "Binario", "Hexadecimal")
+        self.origen_menu.config(font=("Comic Sans MS",12),bg="#00cc22",fg="white")
+        self.origen_menu.place(x=210, y=40, width=130, height=40)
+
 
         #-------------boton---------------
         self.boton1 = tk.Button(root,text="Calcular",bg="#0099cc" , fg="white",font=("Comic Sans MS",12),command=self.calcular_todo)
@@ -68,71 +75,144 @@ class GUI:
             print("Error cargando imagen:", e)
 
     def get_numero(self):
+        dic_oct = ["A","B","C","D","E","F"]
+        dic_hex = ["10","11","12","13","14","15"]
         num_str = self.entrada.get().strip()
-        base = self.base_var.get()
-        
         if not num_str:
             messagebox.showerror("Error", "Por favor ingrese un número.")
             return None, None
-        try:
-            if base == "10":
-                num = float(num_str)
-            else:
-                if "." in num_str:
-                    messagebox.showerror("Error", "Por favor ingrese un número entero.")
-                    return None, None
-                num = int(num_str, int(base))
-            return num, base
-        except ValueError:
-            messagebox.showerror("Error", "Entrada inválida. Por favor ingrese un número.")
-            return None, None
+        
 
        
 
     def NumToBin(self):
-        num_str = self.entrada.get()
+        num_str = self.entrada.get().replace(",",".")
 
-        if not num_str.strip():
-            messagebox.showerror("Error", "Por favor ingrese un número.")
-            return
         try:
-            num = int(num_str)
+            num = float(num_str)
         except ValueError:
-            messagebox.showerror("Error", "Entrada inválida. Por favor ingrese un número entero.")
-            return
-        binario = ""
-        n = num
+            messagebox.showerror("Error", "Por favor ingrese un número válido.")
+            return None, None
 
-        if n == 0:
-            binario = "0"
-        else:
-            while n >0:
-                resto = n % 2
-                n //= 2
-                binario = str(resto) + binario
+        ent = int(num)
+        frac = num - ent
+        
+        bin_ent = ""
+        while ent > 0:
+            resto = ent % 2
+            ent //= 2
+            bin_ent = str(resto) + bin_ent
+        
+        bin_frac = ""
+        
+        f = frac 
+        count = 0
+        
+        while f > 0 and count < 4:
+            f *= 2
+            bit = int(f)
+            bin_frac += str(bit)
+            f -= bit
+            count += 1
+            
+        binario = bin_ent
+        if bin_frac:
+            binario += "." + bin_frac
 
         self.salida_Binario.config(state="normal")
         self.salida_Binario.delete(0, tk.END)
         self.salida_Binario.insert(0, binario)
-        self.salida_Binario.config(state="readonly")    
-        print(binario)
+        self.salida_Binario.config(state="readonly")
+        print(bin(int(self.entrada.get()))[2:])
 
     def NumToHex(self):
+        
+        code = self.entrada.get().replace(",",".")
+        try:
+            num = float(code)
+        except ValueError:
+            messagebox.showerror("Error", "Por favor ingrese un número válido.")
+            return None, None
+        
+        abc = ["A","B","C","D","E","F"]
+        int_ = [10,11,12,13,14,15]
+        
+        ent = int(num)
+        frac = num - ent
 
+        hex_ent = ""
+        while ent > 0:
+            resto = ent % 16
+            ent //= 16
+            if resto in int_:
+                resto = abc[int_.index(resto)]
+            hex_ent = str(resto) + hex_ent
+
+        hex_frac = ""
+
+        f = frac
+        count = 0
+        
+        while f > 0 and count < 4:
+            f *= 16
+            bit = int(f)
+            f -= bit
+            if bit in int_: bit = abc[int_.index(bit)]
+            hex_frac += str(bit)
+            count += 1
+
+        hexadecimal = hex_ent
+        if hex_frac:
+            hexadecimal += "." + hex_frac
+
+        
         self.salida_Hexadecimal.config(state="normal")
         self.salida_Hexadecimal.delete(0, tk.END)
-        self.salida_Hexadecimal.insert(0, hex(int(self.entrada.get()))[2:])
+        self.salida_Hexadecimal.insert(0, hexadecimal.upper())
         self.salida_Hexadecimal.config(state="readonly")
         print(hex(int(self.entrada.get()))[2:])
 
 
     
     def NumToOct(self):
+        num_str = self.entrada.get().replace(",",".")
+
+        try:
+            num = float(num_str)
+        except ValueError:
+            messagebox.showerror("Error", "Por favor ingrese un número válido.")
+            return None, None
+
+        ent = int(num)
+        frac = num - ent
+        
+        oct_ent = ""
+        while ent > 0:
+            resto = ent % 8
+            ent //= 8
+            oct_ent = str(resto) + oct_ent
+
+        oct_frac = ""
+
+        f = frac
+        count = 0
+        
+        while f > 0 and count < 4:
+            f *= 8
+            bit = int(f)
+            oct_frac += str(bit)
+            f -= bit
+            count += 1
+
+        octal = oct_ent
+        if oct_frac:
+            octal += "." + oct_frac
+
         self.salida_Octal.config(state="normal")
         self.salida_Octal.delete(0, tk.END)
-        self.salida_Octal.insert(0, oct(int(self.entrada.get()))[2:])
+        self.salida_Octal.insert(0, octal)
         self.salida_Octal.config(state="readonly")
-        print()
+        print(oct(int(self.entrada.get()))[2:])
 
     def NumToDec(self):
         self.salida_decimal.config(state="normal")
