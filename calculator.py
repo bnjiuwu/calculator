@@ -260,6 +260,7 @@ class GUI:
         print(float(self.entrada.get()))
 
     def HexToDec(self,hex_str):
+    
         dic_hex = {"A":10,"B":11,"C":12,"D":13,"E":14,"F":15}
 
         hex_str = hex_str
@@ -297,7 +298,11 @@ class GUI:
 
     def BinToDec(self,bin_str):
 
-        
+        try:
+            num = float(bin_str)
+        except ValueError:
+            messagebox.showerror("Error", "Por favor ingrese un número válido.")
+            return None, None
 
         entero = 0
         
@@ -323,6 +328,11 @@ class GUI:
     
     def OctToDec(self,oct_str):
         
+        try:
+            num = float(oct_str)
+        except ValueError:
+            messagebox.showerror("Error", "Por favor ingrese un número válido.")
+            return None, None
 
         entero = 0
 
