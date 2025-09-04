@@ -260,8 +260,8 @@ class GUI:
         print(float(self.entrada.get()))
 
     def HexToDec(self,hex_str):
-    
         dic_hex = {"A":10,"B":11,"C":12,"D":13,"E":14,"F":15}
+    
 
         hex_str = hex_str
         
