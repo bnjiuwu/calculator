@@ -4,9 +4,6 @@ from unittest import case
 from PIL import Image,ImageTk
 class GUI:
     def __init__(self,root):
-        #---------- icono ----------
-        self.icono = ImageTk.PhotoImage(file="monke.png")
-        root.iconphoto(False, self.icono)
 
         #---------- Ventana -----------
         self.root = root
@@ -20,8 +17,7 @@ class GUI:
         self.base = tk.Label(root, text="Origen",font=("Comic Sans MS",12))
         self.base.place(x=250,y=10) 
 
-        self.a = tk.Label(root, text="a",font=("Comic Sans MS",12))
-        self.a.place(x=330,y=10)
+        tk.Label(root, text="a",font=("Comic Sans MS",12)).place(x=330,y=10)
 
         #------------ input ------------
         self.entrada = tk.Entry(root, font= ("Arial",14),justify = "center")
@@ -37,7 +33,6 @@ class GUI:
         self.origen_menu = tk.OptionMenu(root, self.origen, "Decimal", "Octal", "Binario", "Hexadecimal")
         self.origen_menu.config(font=("Comic Sans MS",12),bg="#00cc22",fg="white")
         self.origen_menu.place(x=210, y=40, width=130, height=40)
-
 
         #-------------boton---------------
         self.boton1 = tk.Button(root,text="Calcular",bg="#0099cc" , fg="white",font=("Comic Sans MS",12),command=self.calcular_todo)
@@ -260,10 +255,13 @@ class GUI:
         print(float(self.entrada.get()))
 
     def HexToDec(self,hex_str):
-        dic_hex = {"A":10,"B":11,"C":12,"D":13,"E":14,"F":15}
     
+        dic_hex = {"A":10,"B":11,"C":12,"D":13,"E":14,"F":15}
 
-        hex_str = hex_str
+        for c in hex_str:
+            if c not in "0123456789ABCDEF.":
+                messagebox.showerror("Error", "El número hexadecimal solo puede contener dígitos del 0 al 9, letras de la A a la F y un punto.")
+                return None, None
         
         decimal = 0
 
@@ -284,20 +282,26 @@ class GUI:
             self.salida_decimal.delete(0, tk.END)
             self.salida_decimal.insert(0, str(decimal) + str(f).replace("0.","."))  # Concatenar parte entera y fraccionaria
             self.salida_decimal.config(state="readonly")
+            return str(decimal) + str(f).replace("0.",".")
             
         else:
             self.salida_decimal.config(state="normal")
             self.salida_decimal.delete(0, tk.END)
             self.salida_decimal.insert(0, decimal)
             self.salida_decimal.config(state="readonly")
+            
+            print(decimal)
+            return str(decimal)
         
         
-        print(decimal)
 
-        return str(decimal) + str(f).replace("0.",".")
 
     def BinToDec(self,bin_str):
 
+        for c in bin_str:
+            if c not in "01.":
+                messagebox.showerror("Error", "El número binario solo puede contener 0, 1 y un punto.")
+                return None, None
         try:
             num = float(bin_str)
         except ValueError:
@@ -319,21 +323,26 @@ class GUI:
             self.salida_decimal.delete(0, tk.END)
             self.salida_decimal.insert(0, str(entero) + str(fraccion).replace("0.","."))  # Concatenar parte entera y fraccionaria
             self.salida_decimal.config(state="readonly")
+            print(str(entero) + str(fraccion).replace("0.","."))
+            return str(entero) + str(fraccion).replace("0.",".")
         else:
+            self.salida_decimal.config(state="normal")
+            self.salida_decimal.delete(0, tk.END)
             self.salida_decimal.insert(0, str(entero) + "0")  # Si no hay parte fraccionaria
             self.salida_decimal.config(state="readonly")
+            print(str(entero))
+            return str(entero)
 
-        print("semen")
-        return str(entero) + str(fraccion).replace("0.",".")
+        
     
     def OctToDec(self,oct_str):
         
         try:
-            num = float(oct_str)
+            temp = float(oct_str)
         except ValueError:
             messagebox.showerror("Error", "Por favor ingrese un número válido.")
             return None, None
-
+        
         entero = 0
 
         for i, bit in enumerate(reversed(oct_str.split(".")[0])):
@@ -349,13 +358,16 @@ class GUI:
             self.salida_decimal.delete(0, tk.END)
             self.salida_decimal.insert(0, str(entero) + str(fraccion).replace("0.","."))  # Concatenar parte entera y fraccionaria
             self.salida_decimal.config(state="readonly")
+            return str(entero) + str(fraccion).replace("0.",".")
         else:
+            self.salida_decimal.config(state="normal")
+            self.salida_decimal.delete(0, tk.END)
             self.salida_decimal.insert(0, str(entero) + "0")  # Si no hay parte fraccionaria
             self.salida_decimal.config(state="readonly")
+            print(str(entero))
+            return str(entero)
 
 
-        print("semen")
-        return str(entero) + str(fraccion).replace("0.",".")
 
     def calcular_todo(self):
         base = self.base_var.get()
