@@ -362,7 +362,7 @@ class GUI:
         else:
             self.salida_decimal.config(state="normal")
             self.salida_decimal.delete(0, tk.END)
-            self.salida_decimal.insert(0, str(entero) + "0")  # Si no hay parte fraccionaria
+            self.salida_decimal.insert(0, str(entero) + ".0")  # Si no hay parte fraccionaria
             self.salida_decimal.config(state="readonly")
             print(str(entero))
             return str(entero)
